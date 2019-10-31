@@ -1,0 +1,21 @@
+/******  LOGIN PAGE  ******/
+.login-container{
+    display: flex;
+    align-items: center;
+
+    height: calc(100vh - 70px);
+    background-repeat: no-repeat;
+    background-position: right;
+    padding-left: 5%;
+    padding-right: 5%;
+    margin-top: 70px;
+}
+
+
+label{
+    display: flex;
+    flex-direction: column;
+}
+
+
+
