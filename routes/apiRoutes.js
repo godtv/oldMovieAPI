@@ -8,7 +8,7 @@ const router = require( 'express' ).Router(),
 router.post('/login', usersController.apiVerify , usersController.apiAuthenticate);
 
 //Create Users
-router.post('/create',usersController.validateUserData, usersController.create);
+router.post('/createUser',usersController.validateUserData, usersController.create);
 
 router.post('/createMovie', oldMoviecontroller.createMovie);
 
