@@ -41,7 +41,10 @@ module.exports = {
             } )
             .catch( error => {
                 console.log( `Error saving course: ${error.message}` );
-
+                res.status(400).json({
+                    status: "success",
+                    error: error.message
+                })
             } );
     },
     show: (req, res, next) => {
