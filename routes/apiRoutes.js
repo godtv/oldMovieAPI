@@ -12,12 +12,16 @@ router.post('/createUser',usersController.validateUserData, usersController.crea
 
 router.post('/createMovie', oldMoviecontroller.createMovie);
 
+//Admin刪除其他User
+
 
 //ex:查詢其他資料必須先驗證token
 router.use(usersController.verifyJWT);
 //ex:查詢其他資料必須先驗證token
 router.get('/getmovies', oldMoviecontroller.getMovies);
 
+//查詢使用者列表
+router.get('/showUsers', usersController.showAdminUserList);
 
 //router.get( '/courses/:id/join', coursesController.join, coursesController.respondJSON );
 //使用者增加喜歡的電影

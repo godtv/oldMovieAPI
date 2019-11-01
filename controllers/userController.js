@@ -214,6 +214,27 @@ module.exports = {
         }
 
     },
+    //顯示使用者列表，只有admin能用
+    showAdminUserList:(req, res) => {
+      User.find()
+          .then((users) => {
+              if (users) {
+                  res.status(200).json({
+                     status: 200,
+                     userlist: users
+                  });
+              } else {
+                  res.status(200).json({
+                     error: "沒有使用者資料"
+                  });
+              }
+          })
+          .catch(error => {
+              res.json({
+                  error: error.message
+              })
+          })
+    },
 
 };
 

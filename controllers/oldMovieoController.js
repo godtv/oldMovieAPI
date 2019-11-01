@@ -41,7 +41,7 @@ module.exports = {
             } )
             .catch( error => {
                 console.log( `Error saving course: ${error.message}` );
-                res.status(400).json({
+                res.json({
                     status: "success",
                     error: error.message
                 })
@@ -145,7 +145,10 @@ module.exports = {
               userLoveMovie: user.oldmovie
             });
         }).catch((error) => {
-            console.log( `顯示電影收藏錯誤: ${error.message}` );
+            res.status(400).js({
+                status:"顯示電影收藏錯誤",
+                errorMessage: error.message
+            });
         });
     },
     userAddMovies: (req, res) => {
@@ -211,6 +214,7 @@ module.exports = {
         });
 
     },
+    //使用$pull刪除post的電影array
     userRemoveMovies: (req, res, next) => {
 
         let currentUser = res.locals.clientLoginUser;
