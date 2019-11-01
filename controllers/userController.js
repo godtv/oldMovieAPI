@@ -94,9 +94,11 @@ module.exports = {
     },
     //Login前先檢查是否有此人
     apiVerify: (req, res, next) => {
+
         passport.authenticate('local', (err, user, info) => {
             if (err) { console.log('god'); }
-            if (!user) { res.status(400).json(
+            if (!user) {
+                res.status(400).json(
                 { error: 'unsupported_grant_type',
                     error_description: '密碼或郵件輸入錯誤!'
                 });
