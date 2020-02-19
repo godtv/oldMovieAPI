@@ -15,7 +15,11 @@ mongoose.Promise = global.Promise;
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/old-movie", {useNewUrlParser: true});
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/old-movie", {useNewUrlParser: true, useUnifiedTopology: true});
+
+const amqp = require('amqplib/callback_api');
+const EmailController = require('./controllers/emailController');
+
 const db = mongoose.connection;
 
 db.once('open', () => {
@@ -57,12 +61,16 @@ passport.deserializeUser( User.deserializeUser() );
 此過程與使用post方法和指定URL一樣簡單。最後，使用請求對象及其bodyattribute打印已發布表單的內容。
 */
 
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
+// app.use(bodyParser.urlencoded({
+//     extended: false
+// }));
 
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.use(expressValidator());
 
 
@@ -79,13 +87,22 @@ app.use((req, res, next) => {
     next();
 });
 
+
+
+
 app.use('/', router);
 
 const server = app.listen(app.get('port'), () => {
     console.log(`Server running at http://localhost:8000`);
+
+    //測試rabbitmq的寄信功能
+    //EmailController.sendMail();
 });
 
 
+/*
+暫時放這裡 = =
+ */
 
 
 

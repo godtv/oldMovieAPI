@@ -10,6 +10,9 @@ const OldMovies = require('../models/oldmovie'),
         };
 
     };
+
+const Grid = require('gridfs-stream');
+
 const express = require('express'),
     app = express();
 
@@ -27,7 +30,7 @@ module.exports = {
                 console.log( `Error fetching movies: ${error.message}` );
 
             })
-
+            
     },
 
     createMovie: (req, res) => {
@@ -246,11 +249,14 @@ module.exports = {
                                     userLoveMovie: user.oldmovie
                                 });
                                 //測試,寫進的cousre，從user中取出
-                                // User.findOne({email: currentUser})
-                                //     .populate('oldmovie')
-                                //     .exec().then( (user) => {
-                                //     console.log('test' + JSON.stringify(user));
-                                // });
+                                /*
+                                User.findOne({email: currentUser})
+                                    .populate('oldmovie')
+                                    .exec().then( (user) => {
+                                    console.log('test' + JSON.stringify(user));
+                                });
+                                 */
+
                             }
                         })
                         .catch((error) => {
@@ -277,11 +283,13 @@ module.exports = {
 
     },
 
+   
+
     addOneMovie: (req, res, next) => {
         //Get the movie id and current user from the request
         let movieId = req.params.id;
 
-        let currentUser = res.locals.clientLoginUser;
+        let currentUser = res.locals.clientLoginUser;//從checkUserExist取得
 
         OldMovies.findById(movieId).then(movie => {
             if (movie) {
