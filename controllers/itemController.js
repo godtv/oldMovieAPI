@@ -22,6 +22,8 @@ function searchGridFs(bucket , request, response) {
     searchOption = { filename: request.params.name }
   }
   const file = bucket.find(searchOption).toArray((err, files) => {
+    response.set('Content-Type', 'audio/wav');
+    
     if(!files || files.length === 0) {
       return response.status(400).json({
         err: 'no file exist'
