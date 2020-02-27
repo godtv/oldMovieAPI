@@ -1,6 +1,7 @@
 const imgur = require('imgur');
 const fs = require("fs");
 const multer = require('multer');
+const Items = require('../models/item');//把item放在fileController這邊呼叫，新增 or remove
 
 
 //注意，Multer不會添加任何文件擴展名
@@ -18,6 +19,24 @@ const uploadmultiple = multer({storage: storage}).array('images', 8);
 imgur.setClientId('cefcd89343c7e67');
 imgur.setAPIUrl('https://api.imgur.com/3/');
 imgur.setCredentials('mrlaba@gmail.com', 'kick1911', 'cefcd89343c7e67');
+
+  function readImgurImagesByAlbumID(albumid)
+{
+    imgur.setClientId('cefcd89343c7e67');
+    imgur.setAPIUrl('https://api.imgur.com/3/');
+    imgur.setCredentials('mrlaba@gmail.com', 'kick1911', 'cefcd89343c7e67');
+
+       return  imgur.getAlbumInfo(albumid).then(result => {
+           
+            return  result;
+        })
+            .catch(error => {
+                 
+                return  error;
+            });
+          
+        
+}
 
 module.exports = {
 
@@ -80,23 +99,19 @@ module.exports = {
 
     },
     //用這個可取得所以圖片資訊
-    getAlbumInfo: (req, res) => {
-        imgur.setClientId('cefcd89343c7e67');
-        imgur.setAPIUrl('https://api.imgur.com/3/');
-        imgur.setCredentials('mrlaba@gmail.com', 'kick1911', 'cefcd89343c7e67');
+    getAlbumInfo: (req, res) => { 
 
-        let albumid = 'ZcYhT2m';
-        imgur.getAlbumInfo(albumid).then(result => {
-            res.status(200).json({
-                response: result
-            });
-        })
-            .catch(error => {
+           let albumidData = { id: req.body.id };
+            readImgurImagesByAlbumID(albumidData.id).then(result => {
+              res.json({
+                responseData: result
+              });
+            }).catch(error => {
                 res.json({
-                    error: 'error',
-                    errMsg: error.message
+                    errorMsg: error
                 })
             });
+            
     },
     //一次上傳多個圖檔
     uploadMutiple:(req, res, next) => {
@@ -160,6 +175,42 @@ module.exports = {
                 error: error.message
             })
         });
+    },
+
+    //重要，這個理論上只需要新增一次即可 = =，用這類方法一次新增多筆資料
+    configItemList: (req, res) => {
+       let albumid = { id: req.body.id };
+       readImgurImagesByAlbumID(albumid.id).then(result => {
+
+        let dynamicImages = [];
+        result.data.images.map((image) => {
+            let imageHolder = { 
+                id : image.id,
+                name: image.name,
+                imageURL: image.link
+             };
+            dynamicImages.push(imageHolder);
+          
+        });
+     
+       
+        
+        Items.CatalogItem.insertMany(dynamicImages).then((item) => {
+            res.json(item);
+        })
+        .catch(error => {
+            res.json({
+                errMsg: error.message
+            })
+        });
+    
+
+       }).catch(error => {
+           res.json({
+               errorMsg: error 
+           }) 
+       });
     }
+
 
 };

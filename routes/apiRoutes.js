@@ -23,6 +23,9 @@ router.get('/getimageFromImgur', fileController.searchFileFromImgur);
 router.get('/getAlbumInfomation', fileController.getAlbumInfo); 
 router.post('/deleteImage',fileController.deleteImageFromImgur);
 
+//Add Voice Item
+router.post('/addItem',fileController.configItemList);
+
 //Login
 router.post('/login', usersController.apiVerify , usersController.apiAuthenticate);
 

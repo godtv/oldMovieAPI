@@ -21,8 +21,9 @@ function searchGridFs(bucket , request, response) {
   if(request.params.name !== 'all') {
     searchOption = { filename: request.params.name }
   }
+  //audio/mpeg3 / audio/wav
   const file = bucket.find(searchOption).toArray((err, files) => {
-    (request.params.name === 'all') ? response.set('Content-Type', 'application/json') : response.set('Content-Type', 'audio/wav');
+    (request.params.name === 'all') ? response.set('Content-Type', 'application/json') : response.set('Content-Type', 'audio/mpeg3');
     
     
     if(!files || files.length === 0) {
