@@ -2,7 +2,7 @@
 const Item = require('../models/item');
  
 
-const Grid = require('gridfs-stream');
+ 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/old-movie", {useNewUrlParser: true, useUnifiedTopology: true});
 const conn = mongoose.connection;

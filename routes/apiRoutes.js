@@ -25,6 +25,8 @@ router.post('/deleteImage',fileController.deleteImageFromImgur);
 
 //Add Voice Item
 router.post('/addItem',fileController.configItemList);
+//取得item，包含圖跟Audio，很有用
+router.get('/getAnimalItem', fileController.getItems);
 
 //Login
 router.post('/login', usersController.apiVerify , usersController.apiAuthenticate);

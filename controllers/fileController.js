@@ -4,6 +4,11 @@ const multer = require('multer');
 const Items = require('../models/item');//把item放在fileController這邊呼叫，新增 or remove
 
 
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/old-movie", {useNewUrlParser: true, useUnifiedTopology: true});
+const conn = mongoose.connection;
+
+
 //注意，Multer不會添加任何文件擴展名
 const storage = multer.diskStorage({
     destination: './uploads',
@@ -182,34 +187,68 @@ module.exports = {
        let albumid = { id: req.body.id };
        readImgurImagesByAlbumID(albumid.id).then(result => {
 
+        let fullUrl = req.protocol + '://' + req.get('host') + "/api/getFile/";
+         
+        //取得audio file list
+        let  bucket = new mongoose.mongo.GridFSBucket(conn.db);
+        let dynamicAudios = [];
         let dynamicImages = [];
-        result.data.images.map((image) => {
-            let imageHolder = { 
-                id : image.id,
-                name: image.name,
-                imageURL: image.link
-             };
-            dynamicImages.push(imageHolder);
-          
-        });
-     
-       
-        
-        Items.CatalogItem.insertMany(dynamicImages).then((item) => {
-            res.json(item);
-        })
-        .catch(error => {
-            res.json({
-                errMsg: error.message
+        const GridAudiofile = bucket.find().toArray((err, files) => {
+            
+            files.map(singleFile => {
+                let audioHolder = singleFile["filename"];
+                dynamicAudios.push(audioHolder);
+            });
+            
+            result.data.images.map((image) => {
+
+                let imageHolder = { 
+                    id : image.id,
+                    name: image.name,
+                    imageURL: image.link
+                 };
+
+                for (let index = 0; index < dynamicAudios.length; index++) {
+                    const fileName = dynamicAudios[index];
+                    if(fileName.includes(image.name)) {
+                        imageHolder.audioURL = fullUrl + fileName
+                    }
+                }
+
+                dynamicImages.push(imageHolder);
+                 
+            });
+           //console.log("dynamicImages : " + JSON.stringify(dynamicImages));
+
+            Items.CatalogItem.insertMany(dynamicImages).then((item) => {
+                 res.json(item);
             })
+            .catch(error => {
+                res.json({
+                    errMsg: error.message
+                })
+            });
+        
         });
-    
+       
+      
 
        }).catch(error => {
            res.json({
                errorMsg: error 
            }) 
        });
+    },
+    getItems:(req, res) => {
+        Items.CatalogItem.find().then(items => {
+            res.status(200).json({
+                animalItem: items
+            });
+        }).catch(error => {
+            res.json({
+                errorMessage: error.message
+            });
+        });
     }
 
 
