@@ -29,7 +29,11 @@ let userSchme = new Schema({
         type: Schema.Types.ObjectId,
         //ref: 'oldmovie'
         ref: 'Movie'
-    }]
+    }],
+    favoriteItem:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Item'
+    }],
 }, {
     timestamps: true
 });

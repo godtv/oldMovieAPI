@@ -63,6 +63,12 @@ router.post('/userAddMovies/', oldMoviecontroller.checkUserExist, oldMoviecontro
 //顯示使用者喜歡的電影收藏
 router.get('/showusermovie/', oldMoviecontroller.checkUserExist, oldMoviecontroller.showUserMovie);
 
+
+/* 使用者我的最愛Item 相關 api */
+router.post('/userRemoveFavoriteItems/', oldMoviecontroller.checkUserExist, fileController.userRemoveItems);
+router.post('/userAddFavoriteItems/', oldMoviecontroller.checkUserExist, fileController.userAddFavoriteItem);
+router.get('/showUserFavoriteItem/', oldMoviecontroller.checkUserExist, fileController.showUserFavoriteItem);
+
 module.exports = router;
 
 

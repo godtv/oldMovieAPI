@@ -2,7 +2,7 @@ const imgur = require('imgur');
 const fs = require("fs");
 const multer = require('multer');
 const Items = require('../models/item');//把item放在fileController這邊呼叫，新增 or remove
-
+const User = require('../models/user');
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/old-movie", {useNewUrlParser: true, useUnifiedTopology: true});
@@ -195,11 +195,12 @@ module.exports = {
         let dynamicImages = [];
         const GridAudiofile = bucket.find().toArray((err, files) => {
             
+            //將audio fileName放到dynamicAudios
             files.map(singleFile => {
                 let audioHolder = singleFile["filename"];
                 dynamicAudios.push(audioHolder);
             });
-            
+            //將從imgur取得的圖檔取出需要的部分塞到dynamicImages
             result.data.images.map((image) => {
 
                 let imageHolder = { 
@@ -207,7 +208,7 @@ module.exports = {
                     name: image.name,
                     imageURL: image.link
                  };
-
+                //dynamicAudios內的音訊檔名與image檔名一致，就取出並與fullUrl組合成音訊連結
                 for (let index = 0; index < dynamicAudios.length; index++) {
                     const fileName = dynamicAudios[index];
                     if(fileName.includes(image.name)) {
@@ -218,8 +219,8 @@ module.exports = {
                 dynamicImages.push(imageHolder);
                  
             });
-           //console.log("dynamicImages : " + JSON.stringify(dynamicImages));
-
+            
+            //利用mongodb提供的方法一次塞入多筆資料
             Items.CatalogItem.insertMany(dynamicImages).then((item) => {
                  res.json(item);
             })
@@ -231,14 +232,13 @@ module.exports = {
         
         });
        
-      
-
        }).catch(error => {
            res.json({
                errorMsg: error 
            }) 
        });
     },
+//取得item list
     getItems:(req, res) => {
         Items.CatalogItem.find().then(items => {
             res.status(200).json({
@@ -249,7 +249,153 @@ module.exports = {
                 errorMessage: error.message
             });
         });
+    },
+    //刪除item，但其實去heroku上提供的mongodb刪除快很多 = =
+    deleteItem:(req, res) => {
+        Items.CatalogItem.findByIdAndRemove(req.params.id).then(() => {
+            res.json({
+                message: 'remove the item'
+            })  
+        })
+        .catch(error => {
+            res.json({
+                errorMsg: error.message
+            })
+        });
     }
+    ,
+    //使用者我的最愛Item列表的增刪 ->第一個api 顯示使用者最愛的聲音
+    showUserFavoriteItem: (req, res) => {
+        let currentUser = res.locals.clientLoginUser;
+        User.findOne({email:currentUser.email})
+            .populate('favoriteItem')
+            .exec()
+            .then((user) => {
+                res.status(200).json({
+                    status: 200,
+                    userFavoriteItem: user.favoriteItem
+                });
+            }).catch((error) => {
+                res.json({
+                    errorMsg: error.message
+                });
+            });
+        
+    },
+    //使用者新增我的最愛項目
+    userAddFavoriteItem: (req, res) => {
+        let currentUser = res.locals.clientLoginUser;
 
+        const mapItem = req.body.map(data => {
+            var itemids = [];
+            itemids.push(data.id);
+            return itemids;
+        });
+        Items.CatalogItem.find({
+            '_id': { $in: mapItem}
+        }, function(err, docs){
+            if (!err) {
+                //新增不應該使用$set，比如有A.B兩部，只傳送C，會造成收藏只剩下C = =
+                if (typeof docs !== 'undefined' && docs.length > 0) {
+
+                    User.findByIdAndUpdate(currentUser, {
+                        
+                        $addToSet: { favoriteItem: docs }
+                    }, { new: true})
+                        .then((user) => {
+                            if (user) {
+                                console.log('新增我的最愛item成功');
+                                //next();
+
+                                console.log('user.favoriteItem' + user.favoriteItem);
+
+                                res.status(200).json({
+                                    status: '成功',
+                                    userLoveMovie: user.favoriteItem
+                                });
+ 
+                            }
+                        })
+                        .catch((error) => {
+                            console.log( `Error updating user by ID: ${error.message}` );
+                             res.status(400).json({
+                                status: '失敗'
+                             });
+                        });
+                }
+                else {
+                    res.status(400).json({
+                        status: "失敗",
+                        message: "沒有這個item"
+                    });
+                }
+
+            } else {
+                res.status(400).json({
+                    status: "失敗",
+                    message: "沒有這個item"
+                });
+            }
+        });
+
+    },
+    
+    //使用 $pull 刪除post的item array ->這只會影響使用者的item收藏
+    userRemoveItems: (req, res, next) => {
+
+        let currentUser = res.locals.clientLoginUser;
+
+        const mapItem = req.body.map(data => {
+            var a = [];
+            a.push(data.id);
+            return a;
+        });
+        
+        Items.CatalogItem.find({
+            '_id': { $in: mapItem}
+        }, function(err, docs){
+            if (!err) {
+                 
+                console.log("docs is " + docs);
+
+                if (typeof docs !== 'undefined' && docs.length > 0) {
+                    
+                    User.findByIdAndUpdate(currentUser, {
+                        $pull:{favoriteItem: {$in: docs}}
+                    }, {new: true})
+                        .then((user) => {
+                            if (user) {
+                                console.log('刪除Item成功');
+
+                                res.status(200).json({
+                                    status: '成功',
+                                    response: user.favoriteItem
+                                });
+                                 
+                            }
+                        })
+                        .catch((error) => {
+                            console.log( `Error updating user by ID: ${error.message}` );
+                            next( error );
+                        });
+
+                }
+                else {
+                    res.status(400).json({
+                        status: "失敗",
+                        message: "沒有這個Item"
+                    });
+                }
+
+            } else {
+                res.status(400).json({
+                    status: "失敗",
+                    message: "沒有這個Item"
+                });
+            }
+        });
+
+
+    }
 
 };

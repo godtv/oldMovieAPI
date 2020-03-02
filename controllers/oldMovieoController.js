@@ -219,7 +219,7 @@ module.exports = {
         });
 
     },
-    //使用$pull刪除post的電影array
+    //使用 $pull 刪除post的電影array
     userRemoveMovies: (req, res, next) => {
 
         let currentUser = res.locals.clientLoginUser;
@@ -326,6 +326,7 @@ module.exports = {
 
 
     },
+    //我的最愛音效控制
 
 };
 
