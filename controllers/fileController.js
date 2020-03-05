@@ -5,7 +5,6 @@ const Items = require('../models/item');//把item放在fileController這邊呼�
 const User = require('../models/user');
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/old-movie", {useNewUrlParser: true, useUnifiedTopology: true});
 const conn = mongoose.connection;
 
 
@@ -295,7 +294,7 @@ module.exports = {
             '_id': { $in: mapItem}
         }, function(err, docs){
             if (!err) {
-                //新增不應該使用$set，比如有A.B兩部，只傳送C，會造成收藏只剩下C = =
+                //新增不應該使用$set，比如有A.B兩個item，只傳送C，會造成我的最愛只剩下C = =
                 if (typeof docs !== 'undefined' && docs.length > 0) {
 
                     User.findByIdAndUpdate(currentUser, {
@@ -305,8 +304,7 @@ module.exports = {
                         .then((user) => {
                             if (user) {
                                 console.log('新增我的最愛item成功');
-                                //next();
-
+                           
                                 console.log('user.favoriteItem' + user.favoriteItem);
 
                                 res.status(200).json({
