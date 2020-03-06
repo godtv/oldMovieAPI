@@ -24,7 +24,7 @@ const contentTypePlainText = {
 };
 
 module.exports = {
-    //create user(account)
+    
     create: (req, res) => {
         let newUSer = new User(getUserParams(req.body));
 
@@ -43,6 +43,7 @@ module.exports = {
                 });
             }
         })
+        
     },
 
     //帳號資料驗證無誤,再去create user
@@ -54,29 +55,9 @@ module.exports = {
         .trim();
         req.check('email', 'Email is invalid').isEmail();
 
-        // req.check('zipCode', 'Zip code is invalid').notEmpty().isInt().isLength({
-        //     min: 5,
-        //     max: 5
-        // }).equals(req.body.zipCode);
-
         req.check('password', 'Password cannot be empty')
             .notEmpty();
-
-        /*
-        無論是否錯誤，都要next()
-         */
-        // req.getValidationResult()
-        //     .then((error) => {
-        //         if (!error.isEmpty()) {
-        //             next();
-        //         } else {
-        //             res.status(400).json({
-        //                 success: false,
-        //                 message: 'Could not create new user. Please check again',
-        //
-        //             });
-        //         }
-        //     });
+         
         req.getValidationResult()
             .then( ( error ) => {
                 if ( !error.isEmpty() ) {
@@ -235,6 +216,34 @@ module.exports = {
               })
           })
     },
+    changePassword: (req, res) => {
+ 
+        User.findById({ _id: req.body.id },(err, user) => {
+             
+            if (err) {
+              res.json({ success: false, message: err });  
+            } else {
+               
+              if (!user) {
+                res.json({ success: false, message: 'User not found' });  
+              } else {
+                user.changePassword(req.body.oldpassword, req.body.newpassword, function(err) {
+                   if(err) {
+                            if(err.name === 'IncorrectPasswordError'){
+                                 res.json({ success: false, message: 'Incorrect password' }); // Return error
+                            }else {
+                                res.json({ success: false, message: 'Something went wrong!! Please try again after sometimes.' });
+                            }
+                  } else {
+                    res.json({ success: true, message: 'Your password has been changed successfully' });
+                   }
+                 })
+              }
+            }
+          }); 
+        
+
+    }
 
 };
 

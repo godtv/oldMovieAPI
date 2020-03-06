@@ -32,9 +32,10 @@ router.get('/getAnimalItem', fileController.getItems);
 router.post('/login', usersController.apiVerify , usersController.apiAuthenticate);
 
 //Create Users
-router.post('/createUser',usersController.validateUserData, usersController.create);
+router.post('/createUser', usersController.validateUserData, usersController.create);
 
 router.post('/createMovie', oldMoviecontroller.createMovie);
+
 
 //Admin刪除其他User
 
@@ -43,6 +44,11 @@ router.post('/createMovie', oldMoviecontroller.createMovie);
 router.use(usersController.verifyJWT);
 //ex:查詢其他資料必須先驗證token Each app.use(middleware) is called every time a request is sent to the server.
 
+
+//Change Password
+router.post('/userChangePassword',oldMoviecontroller.checkUserExist ,usersController.changePassword);
+
+//取得電影列表
 router.get('/getmovies', oldMoviecontroller.getMovies);
 
 //查詢使用者列表
