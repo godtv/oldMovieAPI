@@ -6,9 +6,14 @@ const router = require( 'express' ).Router(),
     sendMailController = require('../controllers/emailController'),
     messageController = require("../controllers/messageSubscribe"),
     itemController = require("../controllers/itemController"),
-    fileController = require('../controllers/fileController')
+    fileController = require('../controllers/fileController'),
+    pythonController = require('../controllers/pythonScriptController')
 
- 
+//localhost:3000/name?firstname=Ram&lastname=Sharma
+//test call python script
+router.get('/callpython', pythonController.callName);
+router.post('/counterpython', pythonController.countArray);
+
 //router.post('/subscript',messageController.publishSendQueue);
 
 //test send get mp3  /uploadFile/:name/file
