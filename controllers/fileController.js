@@ -7,6 +7,7 @@ const User = require('../models/user');
 const mongoose = require('mongoose');
 const conn = mongoose.connection;
 
+ 
 
 //注意，Multer不會添加任何文件擴展名
 const storage = multer.diskStorage({
@@ -16,6 +17,9 @@ const storage = multer.diskStorage({
     }
    
 });
+
+ 
+
  
 const uploadSingle = multer({ storage: storage }).single('avatar');
 const uploadmultiple = multer({storage: storage}).array('images', 8);
@@ -41,6 +45,9 @@ imgur.setCredentials('mrlaba@gmail.com', 'kick1911', 'cefcd89343c7e67');
           
         
 }
+
+ 
+
 
 module.exports = {
 
