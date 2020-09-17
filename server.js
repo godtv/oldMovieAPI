@@ -11,7 +11,7 @@ const express = require('express'),
     User = require( './models/user' );
 
  const dbURI =
-`mongodb+srv://heroku_fchm6bmt:${process.env.DATABASE_PASSWORD}@cluster-fchm6bmt.keoex.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`;
+`mongodb+srv://heroku_fchm6bmt:${process.env.DATABASE_PASSWORD}@cluster-fchm6bmt.keoex.mongodb.net/heroku_fchm6bmt?retryWrites=true&w=majority`;
 
  console.log("password :" + process.env.DATABASE_PASSWORD)
 
