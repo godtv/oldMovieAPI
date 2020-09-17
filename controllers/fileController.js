@@ -277,6 +277,7 @@ module.exports = {
             .populate('favoriteItem')
             .exec()
             .then((user) => {
+                console.log(JSON.stringify(user))
                 res.status(200).json({
                     status: 200,
                     userFavoriteItem: user.favoriteItem

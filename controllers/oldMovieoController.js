@@ -117,10 +117,11 @@ module.exports = {
         //測試
         let apiUserEmail =  res.locals.userEmial;
 
-        if (apiUserEmail) { //注意，無法res.locals無法 log
+        if (apiUserEmail) { //注意，res.locals無法 log
 
             User.findOne({email: apiUserEmail})
                 .then((user) => {
+                    
                     if (user) {
 
                         res.locals.clientLoginUser = user;
