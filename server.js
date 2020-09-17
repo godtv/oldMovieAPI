@@ -14,7 +14,7 @@ const express = require('express'),
 //     `mongodb+srv://heroku_fchm6bmt:${process.env.DATABASE_PASSWORD}@cluster-fchm6bmt.keoex.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`;
 const dbURI =
     `mongodb+srv://heroku_fchm6bmt:${process.env.DATABASE_PASSWORD}@cluster-fchm6bmt.keoex.mongodb.net/heroku_fchm6bmt?retryWrites=true&w=majority`;
-console.log("LOG????/");
+console.log("password is + : " + process.env.DATABASE_PASSWORD);
 
 //Mongodb
 mongoose.Promise = global.Promise;
