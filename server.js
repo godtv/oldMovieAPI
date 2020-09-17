@@ -13,8 +13,6 @@ const express = require('express'),
  const dbURI =
 `mongodb+srv://heroku_fchm6bmt:${process.env.DATABASE_PASSWORD}@cluster-fchm6bmt.keoex.mongodb.net/heroku_fchm6bmt?retryWrites=true&w=majority`;
 
- console.log("password :" + process.env.DATABASE_PASSWORD)
-
 //Mongodb
 mongoose.Promise = global.Promise;
 //mongoose.connect( 'mongodb://localhost/recipe_db', {useNewUrlParser: true} );
