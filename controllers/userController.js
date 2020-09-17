@@ -77,7 +77,7 @@ module.exports = {
     apiVerify: (req, res, next) => {
 
         passport.authenticate('local', (err, user, info) => {
-            if (err) { console.log('god'); }
+            if (err) { console.log(err); }
             if (!user) {
                 res.status(400).json(
                 { error: 'unsupported_grant_type',

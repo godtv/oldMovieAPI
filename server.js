@@ -19,7 +19,7 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.connect(dbURI || "mongodb://localhost/old-movie", { useNewUrlParser: true, useUnifiedTopology: true });
-
+ 
 const amqp = require('amqplib/callback_api');
 const EmailController = require('./controllers/emailController');
 
