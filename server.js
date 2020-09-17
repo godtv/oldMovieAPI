@@ -9,13 +9,16 @@ const express = require('express'),
 
     User = require( './models/user' );
 
+    require('dotenv').config();
+const dbURI =
+    `mongodb+srv://heroku_fchm6bmt:${process.env.DATABASE_PASSWORD}@cluster-fchm6bmt.keoex.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`;
 //Mongodb
 mongoose.Promise = global.Promise;
 //mongoose.connect( 'mongodb://localhost/recipe_db', {useNewUrlParser: true} );
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
-mongoose.connect(process.env.DB_URI || "mongodb://localhost/old-movie", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(dbURI || "mongodb://localhost/old-movie", { useNewUrlParser: true, useUnifiedTopology: true });
 
  
 
