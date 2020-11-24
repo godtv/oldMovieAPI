@@ -46,7 +46,7 @@ module.exports = {
         
     },
 
-    //帳號資料驗證無誤,再去create user
+    //帳號資料驗證無誤,再去create user ...
     validateUserData: (req, res, next) => {
         req.sanitizeBody('email')
             .normalizeEmail({
