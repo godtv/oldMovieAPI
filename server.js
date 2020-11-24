@@ -100,13 +100,12 @@ const server = app.listen(app.get('port'), () => {
     console.log(`Server running at http://localhost:8000`);
 
     //測試rabbitmq的寄信功能
-    //EmailController.sendMail();
+    //EmailController.sendMail(); 暫時沒用到
 });
 
 
 /*
-暫時放這裡 = =\
-test
+暫時放這裡 
  */
 
 
